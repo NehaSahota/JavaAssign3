@@ -63,9 +63,16 @@ public class ProductServlet extends HttpServlet {
                 pstmt.setString(i, params[i - 1]);
             }
             ResultSet rs = pstmt.executeQuery();
+            sb.append("[");
             while (rs.next()) {
-                sb.append(String.format("%s\t%s\t%s\t%s\n", rs.getInt("productID"), rs.getString("name"), rs.getString("description"),rs.getInt("quantity")));
+                sb.append(String.format("{ \"productId\" : %s , \"name\" : \"%s\", \"description\" : \"%s\", \"quantity\" : %s }", rs.getInt("productID"), rs.getString("name"), rs.getString("description"), rs.getInt("quantity")));
+                sb.append(", ");
+                
+                
+                //sb.append(String.format("%s\t%s\t%s\t%s\n", rs.getInt("productID"), rs.getString("name"), rs.getString("description"),rs.getInt("quantity")));
             }
+            //sb.append(sb.substring(0, sb.length() - 2));
+            sb.append("]");
         } catch (SQLException ex) {
             Logger.getLogger(ProductServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
