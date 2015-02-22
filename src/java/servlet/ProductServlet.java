@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package servlet;
 
 import credentials.Credentials;
@@ -38,7 +37,6 @@ public class ProductServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         response.setHeader("Content-Type", "text/plain-text");
@@ -55,7 +53,8 @@ public class ProductServlet extends HttpServlet {
             Logger.getLogger(ProductServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-       private String getResults(String query, String... params) {
+
+    private String getResults(String query, String... params) {
         StringBuilder sb = new StringBuilder();
         try (Connection conn = Credentials.getConnection()) {
             PreparedStatement pstmt = conn.prepareStatement(query);
@@ -67,46 +66,47 @@ public class ProductServlet extends HttpServlet {
             while (rs.next()) {
                 sb.append(String.format("{ \"productId\" : %s , \"name\" : \"%s\", \"description\" : \"%s\", \"quantity\" : %s }", rs.getInt("productID"), rs.getString("name"), rs.getString("description"), rs.getInt("quantity")));
                 sb.append(", ");
-                
-                
+
                 //sb.append(String.format("%s\t%s\t%s\t%s\n", rs.getInt("productID"), rs.getString("name"), rs.getString("description"),rs.getInt("quantity")));
             }
-            //sb.append(sb.substring(0, sb.length() - 2));
+            
+            
+            sb.delete(sb.length() - 2, sb.length() - 1);
+
             sb.append("]");
         } catch (SQLException ex) {
             Logger.getLogger(ProductServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
         return sb.toString();
     }
-       
-         @Override
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         Set<String> keySet = request.getParameterMap().keySet();
-        int counter=0;
+        int counter = 0;
         try (PrintWriter out = response.getWriter()) {
 
-            if (keySet.contains("productID") && keySet.contains("name") && keySet.contains("description")&& keySet.contains("quantity")) {
-                String productID = request.getParameter("productID");              
+            if (keySet.contains("productID") && keySet.contains("name") && keySet.contains("description") && keySet.contains("quantity")) {
+                String productID = request.getParameter("productID");
                 String name = request.getParameter("name");
                 String description = request.getParameter("description");
                 String quantity = request.getParameter("quantity");
-                counter=doUpdate("INSERT INTO product (productID,name,description,quantity) VALUES (?, ?, ?, ?)", productID, name, description, quantity);
-                if(counter>0){
+                counter = doUpdate("INSERT INTO product (productID,name,description,quantity) VALUES (?, ?, ?, ?)", productID, name, description, quantity);
+                if (counter > 0) {
                     response.sendRedirect("http://localhost:8080/Assign3/product?productID=" + productID);
-                }
-                else {
+                } else {
                     response.setStatus(500);
                 }
             } else {
-                
+
                 out.println("Error: Not enough data to input. Please use a URL of the form /product?productID=XX&name=XXX&description=XXX&quantity=XX");
             }
         } catch (IOException ex) {
             Logger.getLogger(ProductServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-        private int doUpdate(String query, String... params) {
+
+    private int doUpdate(String query, String... params) {
         int numChanges = 0;
         try (Connection conn = Credentials.getConnection()) {
             PreparedStatement pstmt = conn.prepareStatement(query);
@@ -119,37 +119,36 @@ public class ProductServlet extends HttpServlet {
         }
         return numChanges;
     }
-        
-        @Override
+
+    @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) {
         Set<String> keySet = request.getParameterMap().keySet();
-        int counter=0;
+        int counter = 0;
         try (PrintWriter out = response.getWriter()) {
-            if (keySet.contains("productID") && keySet.contains("name") && keySet.contains("description")&& keySet.contains("quantity")) {
-               
-                String productID = request.getParameter("productID");              
+            if (keySet.contains("productID") && keySet.contains("name") && keySet.contains("description") && keySet.contains("quantity")) {
+
+                String productID = request.getParameter("productID");
                 String name = request.getParameter("name");
                 String description = request.getParameter("description");
                 String quantity = request.getParameter("quantity");
-                counter = doUpdate("update product set productID = ?,name = ?, description = ?, quantity = ? where productID = ?",productID, name, description, quantity, productID);
-                if(counter>0){
+                counter = doUpdate("update product set productID = ?,name = ?, description = ?, quantity = ? where productID = ?", productID, name, description, quantity, productID);
+                if (counter > 0) {
                     response.sendRedirect("http://localhost:8080/Assign3/product?productID=" + productID);
-                }
-                else {
+                } else {
                     response.setStatus(500);
                 }
             } else {
-                 out.println("Updated Successfully://the values are being updated but the error message is still being displayed ");
+                out.println("Updated Successfully://the values are being updated but the error message is still being displayed ");
                  //the values are being updated but the error message is still being displayed
-                 //I am not able to figure out the mistake
+                //I am not able to figure out the mistake
                 out.println("Error: Not enough data to input. Please use a URL of the form /product?productID=XX&name=XXX&description=XXX&quantity=XX");
             }
         } catch (IOException ex) {
             System.out.println("Error in writing output: " + ex.getMessage());
         }
     }
-    
-     @Override
+
+    @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
         int counter = 0;
         Set<String> keySet = request.getParameterMap().keySet();
@@ -163,7 +162,7 @@ public class ProductServlet extends HttpServlet {
                     response.setStatus(500);
                 }
             } else {
-               
+
                 out.println("Error: Not enough data to input. Please use a URL of the form /product?productID");
             }
         } catch (IOException ex) {
@@ -187,7 +186,6 @@ public class ProductServlet extends HttpServlet {
 //            out.println("</html>");
 //        }
 //    }
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -197,5 +195,4 @@ public class ProductServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-  
 }
