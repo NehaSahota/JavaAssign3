@@ -58,7 +58,13 @@ public class ProductServlet extends HttpServlet {
             Logger.getLogger(ProductServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+/**
+ * json format taken from
+ * https://code.google.com/p/json-simple/wiki/EncodingExamples
+ * @param query
+ * @param params
+ * @return 
+ */
     private String getResults(String query, String... params) {
         StringBuilder sb = new StringBuilder();
         String myString = "";
