@@ -12,6 +12,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,6 +24,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONValue;
 
 /**
  *
@@ -56,26 +61,37 @@ public class ProductServlet extends HttpServlet {
 
     private String getResults(String query, String... params) {
         StringBuilder sb = new StringBuilder();
+        String myString = "";
         try (Connection conn = Credentials.getConnection()) {
             PreparedStatement pstmt = conn.prepareStatement(query);
             for (int i = 1; i <= params.length; i++) {
                 pstmt.setString(i, params[i - 1]);
             }
+            
             ResultSet rs = pstmt.executeQuery();
-            sb.append("[");
+           // sb.append("[");
+              List list = new LinkedList();
             while (rs.next()) {
-                sb.append(String.format("{ \"productId\" : %s , \"name\" : \"%s\", \"description\" : \"%s\", \"quantity\" : %s }" + ",\n", rs.getInt("productID"), rs.getString("name"), rs.getString("description"), rs.getInt("quantity")));
+                //sb.append(String.format("{ \"productId\" : %s , \"name\" : \"%s\", \"description\" : \"%s\", \"quantity\" : %s }" + ",\n", rs.getInt("productID"), rs.getString("name"), rs.getString("description"), rs.getInt("quantity")));
                 //sb.append(", ");
 
-              
+               Map map = new LinkedHashMap();
+                map.put("productID", rs.getInt("productID"));
+                map.put("name", rs.getString("name"));
+                map.put("description", rs.getString("description"));
+                map.put("quantity", rs.getInt("quantity"));
+                
+                list.add(map);
+                
+                
             }
-
-            sb.delete(sb.length() - 2, sb.length() - 1);
-            sb.append("]");
+                myString=JSONValue.toJSONString(list);
+            //sb.delete(sb.length() - 2, sb.length() - 1);
+            //sb.append("]");
         } catch (SQLException ex) {
             Logger.getLogger(ProductServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return sb.toString();
+        return myString.replace("},", "},\n");
     }
 
     @Override
