@@ -64,15 +64,13 @@ public class ProductServlet extends HttpServlet {
             ResultSet rs = pstmt.executeQuery();
             sb.append("[");
             while (rs.next()) {
-                sb.append(String.format("{ \"productId\" : %s , \"name\" : \"%s\", \"description\" : \"%s\", \"quantity\" : %s }", rs.getInt("productID"), rs.getString("name"), rs.getString("description"), rs.getInt("quantity")));
-                sb.append(", ");
+                sb.append(String.format("{ \"productId\" : %s , \"name\" : \"%s\", \"description\" : \"%s\", \"quantity\" : %s }" + ",\n", rs.getInt("productID"), rs.getString("name"), rs.getString("description"), rs.getInt("quantity")));
+                //sb.append(", ");
 
-                //sb.append(String.format("%s\t%s\t%s\t%s\n", rs.getInt("productID"), rs.getString("name"), rs.getString("description"),rs.getInt("quantity")));
+              
             }
-            
-            
-            sb.delete(sb.length() - 2, sb.length() - 1);
 
+            sb.delete(sb.length() - 2, sb.length() - 1);
             sb.append("]");
         } catch (SQLException ex) {
             Logger.getLogger(ProductServlet.class.getName()).log(Level.SEVERE, null, ex);
@@ -139,7 +137,7 @@ public class ProductServlet extends HttpServlet {
                 }
             } else {
                 out.println("Updated Successfully://the values are being updated but the error message is still being displayed ");
-                 //the values are being updated but the error message is still being displayed
+                //the values are being updated but the error message is still being displayed
                 //I am not able to figure out the mistake
                 out.println("Error: Not enough data to input. Please use a URL of the form /product?productID=XX&name=XXX&description=XXX&quantity=XX");
             }
